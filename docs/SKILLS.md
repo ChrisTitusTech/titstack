@@ -80,6 +80,9 @@ Useful cases for this collection:
 | CodeRabbit returns an authentication error. | Report the actual failure; do not label it rate limiting or a clean review. |
 | How do I fix this Python exception? | Solve the problem; do not invoke `find-skills`. |
 | Find an installable skill for database migrations. | Use `find-skills`; inspect candidates before recommending. |
+| Add a dwm-titus keybinding for Super+Shift+E to open Thunar. | Use `dwm-titus`; edit inside `keys = [ ... ]` and confirm the reload log. |
+| Why is my dwm-titus panel blank? | Use `dwm-titus-debug`; inspect and report without restarting anything. |
+| Diagnose a failed sshd service on a dwm-titus machine. | Use `linux-sysadmin`, not `dwm-titus-debug`. |
 | Correct one word in this Hugo post. | Inspect relevant content and validate; skip a deployment inventory. |
 
 Record actual outcomes separately from expected behavior. A written case is
@@ -93,6 +96,8 @@ and current [skill discovery and metadata documentation](https://learn.chatgpt.c
 - `autofix`
 - `bash-scripting`
 - `code-review`
+- `dwm-titus`
+- `dwm-titus-debug`
 - `find-skills`
 - `forgejo-maintainer`
 - `homelab-admin`
