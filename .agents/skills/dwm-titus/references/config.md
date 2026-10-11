@@ -68,9 +68,11 @@ The parser is a small line parser, not full TOML:
 - `buttons = [ { click="ClkClientWin", mod="SUPER", button=1, func="..." } ]`.
   Click targets: `ClkTagBar`, `ClkLtSymbol`, `ClkStatusText`, `ClkWinTitle`,
   `ClkClientWin`, `ClkRootWin`.
-- Before adding a binding, search the file for the same `mod` + `key`: dwm
-  runs every matching binding, so a duplicate fires both actions. Check that
-  the keysym exists (`xmodmap -pke` or the dwm log after saving).
+- Before adding a binding, check its `mod` + `key` against every `keys` entry
+  and against the four bindings each `tag_keys` entry generates (MODKEY,
+  +Ctrl, +Shift, +Ctrl+Shift with that key; MODKEY is whatever `config.h`
+  sets). dwm runs every matching binding, so a duplicate fires both actions.
+  Check that the keysym exists (`xmodmap -pke` or the dwm log after saving).
 
 ## window-rules.toml
 

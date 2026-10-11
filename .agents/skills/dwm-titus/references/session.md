@@ -87,7 +87,7 @@
       case $kv in DISPLAY=* | XAUTHORITY=*) export "$kv" ;; esac
     done <"/proc/$pid/environ"
   echo "DISPLAY=${DISPLAY:-unset} XAUTHORITY=${XAUTHORITY:-unset}"
-  maim <file.png>
+  maim "$HOME/dwm-debug.png"
   ```
 
   LightDM keeps the authority file in `/run/lightdm/<username>/xauthority`.
