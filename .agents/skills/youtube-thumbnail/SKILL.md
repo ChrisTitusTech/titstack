@@ -28,7 +28,10 @@ and an instantly readable subject over visual noise.
 ## Workflow
 
 1. Inspect the title, topic, source images, brand assets, and any reference
-   thumbnails. Identify the single visual promise of the video.
+   thumbnails. Identify the single visual promise of the video. Before generating
+   a background, ask for the PSD filename unless the user already supplied it.
+   Use that basename with a `.psd` extension in
+   `/media/drive/Video Production/YTthumbnails/`; do not invent a filename.
 2. Select the simplest composition that communicates that promise:
    - one subject plus a contextual background;
    - one subject plus one supporting object; or
@@ -39,7 +42,10 @@ and an instantly readable subject over visual noise.
 4. Lock any source person before generating or editing other elements. Generate
    the background or supporting graphics separately, then composite the original
    person over them. If exact pixel preservation cannot be guaranteed, do not
-   send the person through a generative edit.
+   send the person through a generative edit. As soon as the background is
+   generated, import it into PhotoCraft and save the initial layered PSD at the
+   requested path before continuing the composition. Follow the PSD checkpoint
+   instructions below.
 5. Add text only if it supplies information the image cannot. Use one bold,
    legible type style with strong contrast and minimal effects. Avoid stacked
    captions, tiny labels, punctuation clutter, and multiple competing fonts.
@@ -70,6 +76,24 @@ and an instantly readable subject over visual noise.
   to render the final text.
 - Do not claim a person was preserved unless the final image was compared with
   the source at full size.
+
+## PSD Checkpoint
+
+- Save `/media/drive/Video Production/YTthumbnails/<filename>.psd` through the
+  PhotoCraft MCP's supported PSD save/export operation, discovered from the
+  connected tool schemas. Write an actual PSD, not a renamed `.pcraft` or PNG.
+- Check that the destination directory is available and within the MCP read
+  and write roots before generating the background. If it is not, explain the missing
+  mount or MCP configuration; do not silently save elsewhere or broaden access.
+- Treat the supplied filename as a basename, not a path. If it would replace an
+  existing file and replacement has not been authorized, ask for a different
+  filename or permission to replace that file.
+- Verify the initial PSD exists and reopens in PhotoCraft with the expected
+  canvas and background layer. Keep subsequent people, text, and supporting
+  graphics on separate layers and update the same PSD as the work progresses.
+- Retain the native `.pcraft` working file as described above. Deliver the PSD
+  alongside the final thumbnail and report a failed PSD save or verification
+  as incomplete work, even if the generated background is available.
 
 ## Visual QA
 
