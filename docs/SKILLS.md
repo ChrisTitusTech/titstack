@@ -99,6 +99,7 @@ and current [skill discovery and metadata documentation](https://learn.chatgpt.c
 - `hugo`
 - `linux-sysadmin`
 - `mdbook`
+- `photocraft`
 - `podman-operator`
 - `pr-readiness`
 - `python-ai`

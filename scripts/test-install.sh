@@ -106,6 +106,7 @@ done
 assert_link "$test_codex_home/rules" "$repo_root/codex-home/rules"
 assert_link "$test_codex_home/ollama.config.toml" "$repo_root/codex-home/ollama.config.toml"
 assert_link "$test_codex_home/llamacpp.config.toml" "$repo_root/codex-home/llamacpp.config.toml"
+assert_link "$test_codex_home/photocraft.config.toml" "$repo_root/codex-home/photocraft.config.toml"
 
 for skill_dir in "$repo_root"/.agents/skills/*; do
   [[ -d "$skill_dir" ]] || continue

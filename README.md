@@ -126,6 +126,14 @@ project instead of leaving placeholder requirements.
 
 See [docs/WORKFLOW.md](docs/WORKFLOW.md) for the complete lifecycle.
 
+## PhotoCraft image editing
+
+The optional `photocraft` profile connects Codex to the native
+`photocraft-cli mcp` server for document creation, shape commands, previews,
+and image export. Install the CLI, run the Titus AI installer, then launch
+`codex --profile photocraft` from your artwork directory. See
+[PhotoCraft setup and verification](docs/PHOTOCRAFT.md).
+
 ## Local models
 
 Local model profiles are optional and do not change the default provider.

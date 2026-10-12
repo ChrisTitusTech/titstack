@@ -55,8 +55,10 @@ required_files=(
   "codex-home/config.toml"
   "codex-home/ollama.config.toml"
   "codex-home/llamacpp.config.toml"
+  "codex-home/photocraft.config.toml"
   "codex-home/rules/default.rules"
   "docs/CODEX_LAYOUT.md"
+  "docs/PHOTOCRAFT.md"
   "docs/SKILLS.md"
   "docs/WORKFLOW.md"
   ".github/dependabot.yml"
@@ -66,6 +68,7 @@ required_files=(
   "scripts/install.sh"
   "scripts/test-install.ps1"
   "scripts/test-install.sh"
+  "scripts/test-photocraft-mcp.py"
 )
 
 for relative in "${required_files[@]}"; do

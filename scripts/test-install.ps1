@@ -116,6 +116,7 @@ EXAMPLE_RUNTIME_PATH = "example"
     Assert-Link (Join-Path $testCodexHome 'rules') (Join-Path $repoRoot 'codex-home/rules')
     Assert-Link (Join-Path $testCodexHome 'ollama.config.toml') (Join-Path $repoRoot 'codex-home/ollama.config.toml')
     Assert-Link (Join-Path $testCodexHome 'llamacpp.config.toml') (Join-Path $repoRoot 'codex-home/llamacpp.config.toml')
+    Assert-Link (Join-Path $testCodexHome 'photocraft.config.toml') (Join-Path $repoRoot 'codex-home/photocraft.config.toml')
 
     Get-ChildItem -LiteralPath (Join-Path $repoRoot '.agents/skills') -Directory |
         ForEach-Object {

@@ -51,12 +51,19 @@ and an instantly readable subject over visual noise.
 
 ## Image Tool Guidance
 
+- Use the `photocraft` skill and `photocraft-cli` MCP tools for supported image
+  inspection, layered assembly, editing, previews, and export. Discover command
+  parameters before applying edits. If the connection or capability is missing,
+  explain the limitation before selecting another tool; follow explicit user
+  tool choices and higher-priority tool requirements.
 - Inspect every supplied source image before editing it.
 - Use image generation for new backgrounds, objects, textures, or complete
   thumbnails that contain no supplied person.
-- Use non-generative compositing for supplied people when feasible. Keep the
+- Use PhotoCraft's supported non-generative compositing for supplied people. Keep the
   original person layer unchanged apart from crop, uniform scale, position, and
   drop shadow.
+- Save the layered `.pcraft` document alongside the final image so the
+  composition remains editable.
 - When writing an image-generation prompt, explicitly request a clean 16:9
   composition, a restrained natural palette, realistic contrast, negative
   space for optional text, and no embedded typography unless the tool is meant

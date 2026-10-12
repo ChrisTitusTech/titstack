@@ -70,6 +70,11 @@ Standalone services such as Context7, Playwright, and Chrome DevTools are MCP
 servers, not entries managed by this repository's plugin manifest. Configure
 those separately when a project needs them.
 
+PhotoCraft has an optional managed `photocraft.config.toml` profile. Install
+`photocraft-cli` separately and select `codex --profile photocraft` from an
+artwork directory to start its native stdio MCP server. It is not enabled by
+the default configuration. See [PhotoCraft MCP](PHOTOCRAFT.md).
+
 ## Local model profiles
 
 Codex profile files live directly under `CODEX_HOME` and use the name

@@ -1,0 +1,9 @@
+# Native PhotoCraft MCP server. Install photocraft-cli on PATH first.
+# Run from your artwork directory: codex --profile photocraft
+# See docs/PHOTOCRAFT.md for setup, tools, and verification.
+[mcp_servers.photocraft]
+command = "photocraft-cli"
+args = ["mcp", "--automation-read-root", ".", "--automation-write-root", "."]
+required = true
+startup_timeout_sec = 20
+tool_timeout_sec = 120
