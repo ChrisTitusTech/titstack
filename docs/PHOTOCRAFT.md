@@ -1,7 +1,7 @@
 # PhotoCraft MCP
 
 PhotoCraft already implements a stateful MCP server in Rust, exposed by
-`photocraft-cli mcp`. Titus AI provides its optional Codex profile and an
+`photocraft-cli mcp`. Titus AI provides default Codex configuration, a strict optional profile, and an
 integration test; no wrapper server, Python SDK, Node runtime, or desktop
 window is needed. Python is needed only for the test.
 
@@ -26,23 +26,27 @@ Run the usual Titus AI installer from this repository:
 ./scripts/install.sh
 ```
 
-On Windows, use `./scripts/install.ps1`. Both installers include
-`photocraft.config.toml` automatically. Then start a new Codex session from the
-directory containing your artwork:
+On Windows, use `./scripts/install.ps1`. Both installers install the default MCP configuration, the
+`photocraft.config.toml` profile, and the `photocraft` skill automatically.
+Rerun the installer after updating Titus AI: existing sessions do not gain
+new tools simply because the CLI is installed. Restart Codex (including the
+desktop app) and start a session from the directory containing your artwork:
 
 ```sh
 cd /path/to/artwork
 codex --profile photocraft
 ```
 
-Use `/mcp` to inspect the active connection. The profile leaves the configured
-model unchanged and starts PhotoCraft only when selected. A missing CLI causes
-an explicit startup failure. The default Titus AI profile does not require
-PhotoCraft.
+No profile is needed in ordinary CLI or desktop sessions. The explicit profile
+above leaves the model unchanged and makes a missing CLI a startup failure.
+Default sessions enable PhotoCraft but tolerate an unavailable binary.
+Use `/mcp` to inspect the active connection, or `codex mcp get photocraft` to
+verify registration. Confirm `~/.agents/skills/photocraft/SKILL.md` exists.
+If the skill is missing, rerun the installer before restarting Codex.
 
 ## Transport and file access
 
-The profile launches this command over stdio:
+Both the default configuration and strict profile launch this command over stdio:
 
 ```sh
 photocraft-cli mcp --automation-read-root . --automation-write-root .
@@ -66,8 +70,8 @@ The managed global instructions route image work to the `photocraft` skill.
 It covers command discovery, stateful editing, visual verification, and delivery
 of both editable and exported files. The `youtube-thumbnail` skill uses that
 workflow for assembly while retaining its source-person preservation rules.
-These skills do not start an MCP connection themselves; select the profile
-before beginning image work. If the connection or a required operation is
+These skills do not start an MCP connection themselves; the installed default
+configuration starts it when a new session loads. If the connection or a required operation is
 unavailable, report that limitation before choosing another tool.
 
 The server exposes the engine's command registry through `command_list` and
@@ -115,6 +119,7 @@ Run the repository gate, then the live MCP smoke test:
 ```sh
 ./scripts/validate.sh
 python3 scripts/test-photocraft-mcp.py
+python3 scripts/test-photocraft-mcp.py --config codex-home/photocraft.config.toml
 ```
 
 To test a locally built binary without installing it:
@@ -124,7 +129,7 @@ python3 scripts/test-photocraft-mcp.py --cli /path/to/photocraft/target/release/
 ```
 
 On Windows, use `python` and the `.exe` path. The smoke test uses Python 3.11+
-(or Python 3.9+ with `tomli`), reads the actual profile's arguments, performs an
+(or Python 3.9+ with `tomli`), reads the selected configuration's arguments (the default config unless overridden), performs an
 MCP handshake and tool discovery, creates a shape, checks the PNG preview and
 export, reopens the editable file, and verifies out-of-root access is refused.
 It uses an isolated temporary directory and requires no model/API credentials.

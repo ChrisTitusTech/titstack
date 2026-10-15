@@ -86,3 +86,13 @@ followUpQueueMode = "queue"
 
 [windows]
 sandbox = "elevated"
+
+# Available in ordinary CLI and desktop sessions; install photocraft-cli on PATH.
+# Keep startup optional on machines without PhotoCraft. The dedicated profile
+# makes this server required. File access remains scoped to the startup directory.
+[mcp_servers.photocraft]
+command = "photocraft-cli"
+args = ["mcp", "--automation-read-root", ".", "--automation-write-root", "."]
+required = false
+startup_timeout_sec = 20
+tool_timeout_sec = 120

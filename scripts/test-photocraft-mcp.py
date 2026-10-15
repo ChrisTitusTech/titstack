@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exercise the managed PhotoCraft profile against a real CLI over MCP stdio."""
+"""Exercise the managed PhotoCraft configuration against a real CLI over MCP stdio."""
 
 import argparse
 import base64
@@ -125,11 +125,14 @@ def check(client, root):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--cli", help="PhotoCraft CLI executable (default: profile command on PATH)")
-    args = parser.parse_args()
+    parser.add_argument("--cli", help="PhotoCraft CLI executable (default: configured command on PATH)")
     repo = Path(__file__).resolve().parent.parent
-    profile = tomllib.loads((repo / "codex-home/photocraft.config.toml").read_text())
-    server = profile["mcp_servers"]["photocraft"]
+    parser.add_argument("--config", type=Path, default=repo / "codex-home/config.toml",
+                        help="Codex config to exercise (default: managed default config)")
+    args = parser.parse_args()
+    config = tomllib.loads(args.config.read_text())
+    server = config["mcp_servers"]["photocraft"]
+    assert server.get("enabled", True), "PhotoCraft is disabled in the selected config"
     binary = shutil.which(args.cli or server["command"])
     if not binary:
         parser.error("photocraft-cli not found; install it or pass --cli /path/to/photocraft-cli")
