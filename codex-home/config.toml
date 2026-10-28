@@ -10,79 +10,22 @@ sandbox_mode = "danger-full-access"
 fast_mode = false
 memories = false
 
-[projects."/home/titus/github/titus-ai"]
-trust_level = "trusted"
-
-[projects."/home/titus/github/resolve-linux"]
-trust_level = "trusted"
-
-[projects."/home/titus/.local/share/dwm-titus"]
-trust_level = "trusted"
-
-[projects."/media/drive/Video Production/AAA-Videos to Make"]
-trust_level = "trusted"
-
-[projects."/home/titus/games/eq-legends"]
-trust_level = "trusted"
-
-[projects."/home/titus/games/everquest"]
-trust_level = "trusted"
-
-[projects."/home/titus/Downloads/HUDChallenges 2860 1.4.7 QemLENmWz"]
-trust_level = "trusted"
-
-[projects."/home/titus/github/fallout76-configs"]
-trust_level = "trusted"
-
-[projects."/home/titus/github/3plates"]
-trust_level = "trusted"
-
-[projects."/home/titus/github"]
-trust_level = "trusted"
-
-[projects."/home/titus"]
-trust_level = "trusted"
-
-[projects."/home/titus/github/copr-fedora"]
-trust_level = "trusted"
-
-[projects."/home/titus/github/dwm-titus"]
-trust_level = "trusted"
-
-[projects."/home/titus/.local/share/mybash"]
-trust_level = "trusted"
-
-[projects."/home/titus/github/website-messages"]
-trust_level = "trusted"
-
-[projects."/home/titus/github/website"]
-trust_level = "trusted"
-
-[projects."/home/titus/github/newsletter"]
-trust_level = "trusted"
-
-[projects."/home/titus/github/streamdeck-dashboard"]
-trust_level = "trusted"
-
-[projects."/home/titus/github/linutil"]
-trust_level = "trusted"
-
-[projects."/home/titus/github/agent-proxy"]
-trust_level = "trusted"
-
-[projects."/home/titus/github/t3code"]
-trust_level = "trusted"
-
 [tui]
 status_line = ["model-with-reasoning", "current-dir", "project-name", "git-branch"]
 status_line_use_colors = true
-
-[tui.model_availability_nux]
-"gpt-5.5" = 4
-"gpt-5.6-sol" = 4
 
 [desktop]
 followUpQueueMode = "queue"
 
 [windows]
 sandbox = "elevated"
+
+# Available in ordinary CLI and desktop sessions; install photocraft-cli on PATH.
+# Keep startup optional on machines without PhotoCraft. The dedicated profile
+# makes this server required. File access remains scoped to the startup directory.
+[mcp_servers.photocraft]
+command = "photocraft-cli"
+args = ["mcp", "--automation-read-root", ".", "--automation-write-root", "."]
+required = false
+startup_timeout_sec = 20
+tool_timeout_sec = 120

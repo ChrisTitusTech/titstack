@@ -78,8 +78,6 @@ Useful cases for this collection:
 | CodeRabbit reports a rate limit during an authorized PR fix loop. | Switch to Codex review, address existing and new findings, and announce merge readiness after a clean review and all required gates pass on the latest remote head. |
 | Codex fallback is clean but a required CodeRabbit check is pending. | Report the remaining required gate; do not claim merge readiness. |
 | CodeRabbit returns an authentication error. | Report the actual failure; do not label it rate limiting or a clean review. |
-| How do I fix this Python exception? | Solve the problem; do not invoke `find-skills`. |
-| Find an installable skill for database migrations. | Use `find-skills`; inspect candidates before recommending. |
 | Add a dwm-titus keybinding for Super+Shift+E to open Thunar. | Use `dwm-titus`; edit inside `keys = [ ... ]` and confirm the reload log. |
 | Why is my dwm-titus panel blank? | Use `dwm-titus-debug`; inspect and report without restarting anything. |
 | Diagnose a failed sshd service on a dwm-titus machine. | Use `linux-sysadmin`, not `dwm-titus-debug`. |
@@ -98,17 +96,15 @@ and current [skill discovery and metadata documentation](https://learn.chatgpt.c
 - `code-review`
 - `dwm-titus`
 - `dwm-titus-debug`
-- `find-skills`
 - `forgejo-maintainer`
 - `homelab-admin`
 - `hugo`
 - `linux-sysadmin`
 - `mdbook`
+- `photocraft`
 - `podman-operator`
 - `pr-readiness`
-- `python-ai`
 - `quickshell`
-- `rust-cli`
 - `wayfinder`
 - `youtube-thumbnail`
 

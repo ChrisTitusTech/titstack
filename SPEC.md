@@ -1,4 +1,4 @@
-# Titus AI specification
+# titstack specification
 
 ## Problem
 

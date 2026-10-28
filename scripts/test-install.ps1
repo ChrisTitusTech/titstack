@@ -5,7 +5,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$taskTestRoot = Join-Path ([System.IO.Path]::GetTempPath()) "titus-ai-install-test-$([guid]::NewGuid())"
+$taskTestRoot = Join-Path ([System.IO.Path]::GetTempPath()) "titstack-install-test-$([guid]::NewGuid())"
 $testCodexHome = Join-Path $taskTestRoot 'codex home'
 $testAgentsHome = Join-Path $taskTestRoot 'agents home'
 $testUserHome = Join-Path $taskTestRoot 'user home'
@@ -116,6 +116,7 @@ EXAMPLE_RUNTIME_PATH = "example"
     Assert-Link (Join-Path $testCodexHome 'rules') (Join-Path $repoRoot 'codex-home/rules')
     Assert-Link (Join-Path $testCodexHome 'ollama.config.toml') (Join-Path $repoRoot 'codex-home/ollama.config.toml')
     Assert-Link (Join-Path $testCodexHome 'llamacpp.config.toml') (Join-Path $repoRoot 'codex-home/llamacpp.config.toml')
+    Assert-Link (Join-Path $testCodexHome 'photocraft.config.toml') (Join-Path $repoRoot 'codex-home/photocraft.config.toml')
 
     Get-ChildItem -LiteralPath (Join-Path $repoRoot '.agents/skills') -Directory |
         ForEach-Object {
@@ -231,7 +232,7 @@ finally {
     $normalizedTestRoot = [System.IO.Path]::GetFullPath($taskTestRoot)
     if (
         $normalizedTestRoot.StartsWith($tempRoot, [StringComparison]::OrdinalIgnoreCase) -and
-        (Split-Path -Leaf $normalizedTestRoot).StartsWith('titus-ai-install-test-')
+        (Split-Path -Leaf $normalizedTestRoot).StartsWith('titstack-install-test-')
     ) {
         Remove-Item -LiteralPath $normalizedTestRoot -Recurse -Force -ErrorAction SilentlyContinue
     }

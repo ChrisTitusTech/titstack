@@ -98,6 +98,11 @@
 - Use `AGENTS.md` for durable repository conventions.
 - Use `.codex/config.toml` for trusted project-specific Codex settings.
 - Use skills for reusable task workflows.
+- Use the `photocraft` skill and `photocraft-cli` MCP server when working with
+  images. Use its document, layer, preview, and export tools for supported
+  operations. If the MCP connection or a required capability is unavailable,
+  report the limitation before choosing another tool; follow explicit user
+  tool choices and higher-priority tool requirements.
 - Always use the `youtube-thumbnail` skill whenever a user mentions a YouTube
   thumbnail or asks to create, edit, review, or improve one.
 - Treat files under `docs/` as references, not automatic instructions.

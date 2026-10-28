@@ -1,4 +1,4 @@
-# Titus AI roadmap
+# titstack roadmap
 
 ## Phase 1: Portable Codex foundation
 

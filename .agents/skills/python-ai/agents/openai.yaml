@@ -1,4 +1,0 @@
-interface:
-  display_name: "Python AI"
-  short_description: "Build Python AI tools and agents"
-  default_prompt: "Use $python-ai to build or debug a Python AI application."

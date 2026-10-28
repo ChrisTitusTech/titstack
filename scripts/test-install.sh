@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-task_test_root="$(mktemp -d "${TMPDIR:-/tmp}/titus-ai-install-test.XXXXXX")"
+task_test_root="$(mktemp -d "${TMPDIR:-/tmp}/titstack-install-test.XXXXXX")"
 test_codex_home="$task_test_root/codex home"
 test_agents_home="$task_test_root/agents home"
 test_user_home="$task_test_root/user home"
@@ -22,7 +22,7 @@ for candidate in python3 python; do
 done
 
 cleanup() {
-  if [[ -d "$task_test_root" && "$(basename "$task_test_root")" == titus-ai-install-test.* ]]; then
+  if [[ -d "$task_test_root" && "$(basename "$task_test_root")" == titstack-install-test.* ]]; then
     rm -rf -- "$task_test_root"
   fi
 }
@@ -106,6 +106,7 @@ done
 assert_link "$test_codex_home/rules" "$repo_root/codex-home/rules"
 assert_link "$test_codex_home/ollama.config.toml" "$repo_root/codex-home/ollama.config.toml"
 assert_link "$test_codex_home/llamacpp.config.toml" "$repo_root/codex-home/llamacpp.config.toml"
+assert_link "$test_codex_home/photocraft.config.toml" "$repo_root/codex-home/photocraft.config.toml"
 
 for skill_dir in "$repo_root"/.agents/skills/*; do
   [[ -d "$skill_dir" ]] || continue
@@ -113,14 +114,14 @@ for skill_dir in "$repo_root"/.agents/skills/*; do
 done
 
 shopt -s nullglob
-instruction_backups=("$test_codex_home"/backups/titus-ai-*/AGENTS.md)
+instruction_backups=("$test_codex_home"/backups/titstack-*/AGENTS.md)
 shopt -u nullglob
 [[ ${#instruction_backups[@]} -eq 1 ]] ||
   fail "expected one AGENTS.md backup, found ${#instruction_backups[@]}"
 [[ "$(sed -n '1p' "${instruction_backups[0]}")" == "original global instructions" ]] ||
   fail "AGENTS.md backup content changed"
 shopt -s nullglob
-config_backups=("$test_codex_home"/backups/titus-ai-*/config.toml)
+config_backups=("$test_codex_home"/backups/titstack-*/config.toml)
 shopt -u nullglob
 [[ ${#config_backups[@]} -eq 1 ]] ||
   fail "expected one config.toml backup, found ${#config_backups[@]}"
@@ -138,12 +139,12 @@ HOME="$test_user_home" CODEX_HOME="$test_codex_home" AGENTS_HOME="$test_agents_h
   fail "idempotent install replaced an equivalent relative link"
 
 shopt -s nullglob
-instruction_backups=("$test_codex_home"/backups/titus-ai-*/AGENTS.md)
+instruction_backups=("$test_codex_home"/backups/titstack-*/AGENTS.md)
 shopt -u nullglob
 [[ ${#instruction_backups[@]} -eq 1 ]] ||
   fail "idempotent install created another AGENTS.md backup"
 shopt -s nullglob
-config_backups=("$test_codex_home"/backups/titus-ai-*/config.toml)
+config_backups=("$test_codex_home"/backups/titstack-*/config.toml)
 shopt -u nullglob
 [[ ${#config_backups[@]} -eq 1 ]] ||
   fail "idempotent install created another config.toml backup"
