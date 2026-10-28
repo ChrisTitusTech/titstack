@@ -1,6 +1,7 @@
 # titstack - custom skills for your AI agent
 
-<img width="256" height="256" alt="image" src="https://github.com/user-attachments/assets/d9fc595e-8bf5-4179-96d9-c0644ff62ae2" />
+<img width="400" height="400" alt="image" src="https://github.com/user-attachments/assets/238cb52f-00e0-423b-8f9d-4563e24bb9d8" align="center" />
+
 
 
 A reusable Codex setup for Linux, macOS, and Windows: shared instructions,
