@@ -50,6 +50,12 @@ mkdir -p "$test_codex_home"
 mkdir -p "$test_github_repo/.git"
 printf 'original global instructions\n' >"$test_codex_home/AGENTS.md"
 cat >"$test_codex_home/config.toml" <<'EOF'
+# Personal settings and formatting must survive upgrades.
+model = "personal-model"
+model_reasoning_effort = "low"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
 notify = [
   "example-notifier",
   "turn-ended",
@@ -74,7 +80,21 @@ command = "node"
 
 [shell_environment_policy.set]
 EXAMPLE_RUNTIME_PATH = "example"
+
+[mcp_servers.photocraft]
+command = "my-photocraft-wrapper"
+args = ["mcp"]
+
+[mcp_servers.custom]
+command = "custom-server"
+
+[projects."/personal/project"]
+trust_level = "untrusted"
+
+[features]
+fast_mode = true
 EOF
+cp "$test_codex_home/config.toml" "$task_test_root/original-config.toml"
 
 HOME="$test_user_home" CODEX_HOME="$test_codex_home" AGENTS_HOME="$test_agents_home" \
   "$repo_root/scripts/install.sh" >/dev/null
@@ -82,27 +102,8 @@ HOME="$test_user_home" CODEX_HOME="$test_codex_home" AGENTS_HOME="$test_agents_h
 assert_link "$test_codex_home/AGENTS.md" "$repo_root/codex-home/AGENTS.md"
 [[ -f "$test_codex_home/config.toml" && ! -L "$test_codex_home/config.toml" ]] ||
   fail "expected generated config file: $test_codex_home/config.toml"
-grep -Fqx "[projects.\"$test_user_home/github\"]" "$test_codex_home/config.toml" ||
-  fail "generated config does not trust the user GitHub root"
-grep -Fqx "[projects.\"$test_github_repo\"]" "$test_codex_home/config.toml" ||
-  fail "generated config does not trust a nested Git repository"
-if [[ -n "$python_cmd" ]]; then
-  "$python_cmd" -c 'import pathlib, sys; tomllib = __import__("tomllib" if sys.version_info >= (3, 11) else "tomli"); tomllib.loads(pathlib.Path(sys.argv[1]).read_text())' \
-    "$test_codex_home/config.toml" || fail "generated config is invalid TOML"
-  "$python_cmd" -c 'import pathlib, sys; tomllib = __import__("tomllib" if sys.version_info >= (3, 11) else "tomli"); config = tomllib.loads(pathlib.Path(sys.argv[1]).read_text()); raise SystemExit(config.get("features", {}).get("fast_mode") is not False)' \
-    "$test_codex_home/config.toml" || fail "generated config must disable features.fast_mode by default"
-fi
-for preserved_line in \
-  'notify = [' \
-  '[plugins."example@personal"]' \
-  '[marketplaces.personal]' \
-  '[hooks.state."example"]' \
-  '[notice]' \
-  '[mcp_servers.node_repl]' \
-  '[shell_environment_policy.set]'; do
-  grep -Fqx "$preserved_line" "$test_codex_home/config.toml" ||
-    fail "generated config dropped machine-local state: $preserved_line"
-done
+cmp "$task_test_root/original-config.toml" "$test_codex_home/config.toml" ||
+  fail "installation changed existing config"
 assert_link "$test_codex_home/rules" "$repo_root/codex-home/rules"
 assert_link "$test_codex_home/ollama.config.toml" "$repo_root/codex-home/ollama.config.toml"
 assert_link "$test_codex_home/llamacpp.config.toml" "$repo_root/codex-home/llamacpp.config.toml"
@@ -123,8 +124,8 @@ shopt -u nullglob
 shopt -s nullglob
 config_backups=("$test_codex_home"/backups/titstack-*/config.toml)
 shopt -u nullglob
-[[ ${#config_backups[@]} -eq 1 ]] ||
-  fail "expected one config.toml backup, found ${#config_backups[@]}"
+[[ ${#config_backups[@]} -eq 0 ]] ||
+  fail "expected no config.toml backups, found ${#config_backups[@]}"
 
 link_fixture_dir="$task_test_root/link fixtures"
 mkdir -p "$link_fixture_dir"
@@ -146,19 +147,21 @@ shopt -u nullglob
 shopt -s nullglob
 config_backups=("$test_codex_home"/backups/titstack-*/config.toml)
 shopt -u nullglob
-[[ ${#config_backups[@]} -eq 1 ]] ||
+[[ ${#config_backups[@]} -eq 0 ]] ||
   fail "idempotent install created another config.toml backup"
-for preserved_line in \
-  'notify = [' \
-  '[plugins."example@personal"]' \
-  '[marketplaces.personal]' \
-  '[hooks.state."example"]' \
-  '[notice]' \
-  '[mcp_servers.node_repl]' \
-  '[shell_environment_policy.set]'; do
-  [[ "$(grep -Fxc "$preserved_line" "$test_codex_home/config.toml")" -eq 1 ]] ||
-    fail "idempotent install duplicated machine-local state: $preserved_line"
-done
+cmp "$task_test_root/original-config.toml" "$test_codex_home/config.toml" ||
+  fail "repeat installation changed existing config"
+
+# Existing configs survive dry runs and symbolic links are not replaced.
+HOME="$test_user_home" CODEX_HOME="$test_codex_home" AGENTS_HOME="$test_agents_home" \
+  "$repo_root/scripts/install.sh" --dry-run >/dev/null
+cmp "$task_test_root/original-config.toml" "$test_codex_home/config.toml" ||
+  fail "dry-run changed existing config"
+rm -- "$test_codex_home/config.toml"
+ln -s "$task_test_root/original-config.toml" "$test_codex_home/config.toml"
+HOME="$test_user_home" CODEX_HOME="$test_codex_home" AGENTS_HOME="$test_agents_home" \
+  "$repo_root/scripts/install.sh" >/dev/null
+assert_link "$test_codex_home/config.toml" "$task_test_root/original-config.toml"
 
 rm -- "$test_codex_home/rules"
 ln -s "$repo_root/codex-home/rules/." "$test_codex_home/rules"
@@ -197,6 +200,21 @@ HOME="$test_user_home" PATH="$fake_bin:$PATH" CODEX_PLUGIN_TEST_LOG="$plugin_log
   CODEX_HOME="$plugin_codex_home" AGENTS_HOME="$plugin_agents_home" \
   "$repo_root/scripts/install.sh" --plugins >/dev/null
 
+# A new installation still receives valid defaults and discovered trust entries.
+grep -Fqx "[projects.\"$test_user_home/github\"]" "$plugin_codex_home/config.toml" ||
+  fail "fresh config does not trust the user GitHub root"
+grep -Fqx "[projects.\"$test_github_repo\"]" "$plugin_codex_home/config.toml" ||
+  fail "fresh config does not trust a nested repository"
+if [[ -n "$python_cmd" ]]; then
+  "$python_cmd" -c 'import pathlib, sys; tomllib = __import__("tomllib" if sys.version_info >= (3, 11) else "tomli"); config = tomllib.loads(pathlib.Path(sys.argv[1]).read_text()); assert config["features"]["fast_mode"] is False' \
+    "$plugin_codex_home/config.toml"
+fi
+cp "$plugin_codex_home/config.toml" "$task_test_root/fresh-config.toml"
+HOME="$test_user_home" CODEX_HOME="$plugin_codex_home" AGENTS_HOME="$plugin_agents_home" \
+  "$repo_root/scripts/install.sh" >/dev/null
+cmp "$task_test_root/fresh-config.toml" "$plugin_codex_home/config.toml" ||
+  fail "repeat installation changed initialized config"
+
 expected_plugin_calls="$(sed 's/^/plugin add /' "$repo_root/codex-plugins.txt")"
 actual_plugin_calls="$(sed -n '1,$p' "$plugin_log")"
 [[ "$actual_plugin_calls" == "$expected_plugin_calls" ]] ||
@@ -229,5 +247,25 @@ grep -q '^error: project path contains unsupported control characters:' "$contro
   fail "installer did not report the invalid project path"
 [[ ! -e "$control_codex_home" && ! -L "$control_codex_home" ]] ||
   fail "invalid project path changed CODEX_HOME"
+
+# Invalid config targets must fail before changing global instructions.
+for kind in directory dangling; do
+  invalid_home="$task_test_root/invalid $kind"
+  mkdir -p "$invalid_home"
+  printf 'keep instructions\n' >"$invalid_home/AGENTS.md"
+  if [[ "$kind" == directory ]]; then
+    mkdir "$invalid_home/config.toml"
+  else
+    ln -s "$invalid_home/missing.toml" "$invalid_home/config.toml"
+  fi
+  if HOME="$test_user_home" CODEX_HOME="$invalid_home" AGENTS_HOME="$test_agents_home" \
+    "$repo_root/scripts/install.sh" >"$task_test_root/invalid.log" 2>&1; then
+    fail "installer accepted $kind config target"
+  fi
+  grep -q 'config.toml must be a regular file or a link to one' "$task_test_root/invalid.log" ||
+    fail "invalid config target did not produce expected diagnostic"
+  [[ ! -L "$invalid_home/AGENTS.md" && "$(cat "$invalid_home/AGENTS.md")" == 'keep instructions' ]] ||
+    fail "invalid config target changed instructions"
+done
 
 printf 'installer integration test passed\n'

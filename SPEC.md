@@ -19,7 +19,10 @@ wants the same safe Codex baseline in multiple repositories.
 - Optionally install an explicit list of recommended Codex plugins from
   configured marketplaces.
 - Trust the current user's `~/github` directory and every Git worktree
-  discovered recursively beneath it on each installation.
+  discovered recursively beneath it when initializing an absent config.
+- Preserve existing `config.toml` files and links to files without rewriting
+  personal settings, comments, or trust decisions. Reject invalid target types
+  before changing managed files.
 - Preview installation without changing the target system.
 - Preserve existing managed targets in timestamped backups before replacement.
 - Leave credentials, sessions, history, caches, plugin state, and runtime
@@ -40,7 +43,7 @@ wants the same safe Codex baseline in multiple repositories.
 
 - `codex-home/` contains portable files installed into `CODEX_HOME`.
 - The installer renders `config.toml` with machine-specific exact trust entries
-  while linking the other managed files.
+  only when absent, while linking the other managed files.
 - `.agents/skills/` contains reusable workflows linked into `AGENTS_HOME`.
 - `scripts/install.sh` and `scripts/install.ps1` perform user-scoped
   installation.
@@ -82,7 +85,7 @@ wants the same safe Codex baseline in multiple repositories.
 
 - `./scripts/validate.sh` passes from a clean checkout.
 - Linux and macOS installer integration tests verify dry-run safety, backup
-  preservation, machine-local configuration state, correct links, generated
+  preservation, byte-for-byte existing config preservation, correct links, generated
   GitHub trust entries, and idempotence in isolated temporary directories.
 - Windows CI verifies the equivalent PowerShell installer behavior.
 - Installer tests verify plugin opt-in and dry-run behavior without contacting

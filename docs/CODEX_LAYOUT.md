@@ -41,11 +41,11 @@ This repository manages only:
 - an opt-in list of recommended plugin selectors
 
 The installer links instructions, rules, profiles, and skills into their
-documented locations while preserving runtime state. It renders
-`~/.codex/config.toml` as a regular file so it can add machine-specific trust
-entries for `~/github` and every Git worktree discovered beneath it. Existing
-notification, plugin, marketplace, hook-state, notice, local Node REPL, and
-runtime shell-environment settings are carried forward into the rendered file.
+documented locations while preserving runtime state. If `config.toml` is
+absent, it creates a regular file with defaults and machine-specific trust
+entries. Existing config files and links to files are preserved without
+parsing or merging them. Personal model choices, MCP servers, trust decisions,
+and app state remain intact. See [setup and customization](SETUP.md) for updates.
 With the explicit plugin option, it asks Codex to install each selector from
 `codex-plugins.txt`; it does not link or track the resulting plugin cache,
 authentication, or connector state.
@@ -53,10 +53,9 @@ authentication, or connector state.
 ## GitHub project trust
 
 Codex project trust uses exact absolute project paths. A parent project entry
-and wildcard entries do not automatically trust nested repositories. On each
-run, the installer adds the current user's `~/github` path plus every Git
-worktree found recursively below it to the generated config. Rerun the
-installer after adding repositories to refresh those entries.
+and wildcard entries do not automatically trust nested repositories. When no config exists, the installer adds the current user's `~/github` path plus every Git
+worktree found recursively below it to the generated config. Existing configs are unchanged on subsequent installs. Manage new
+project trust in Codex or your installed config.
 
 ## Plugins and MCP servers
 
@@ -71,9 +70,9 @@ servers, not entries managed by this repository's plugin manifest. Configure
 those separately when a project needs them.
 
 PhotoCraft is enabled in the managed default configuration for CLI and desktop
-sessions. Install `photocraft-cli` separately, rerun the installer to refresh
-configuration and skill links, and restart Codex from the artwork directory.
-The server uses that startup directory as its read/write roots. The optional
+sessions. Install `photocraft-cli` separately, run the installer for profile and skill links, and restart Codex from the artwork directory.
+For an existing config, add the `[mcp_servers.photocraft]` section from
+`codex-home/config.toml` yourself if missing. The server uses that startup directory as its read/write roots. The optional
 `photocraft.config.toml` profile makes server startup required; default sessions
 can still start on machines without the binary. See [PhotoCraft MCP](PHOTOCRAFT.md).
 

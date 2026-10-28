@@ -26,8 +26,11 @@ Run the usual titstack installer from this repository:
 ./scripts/install.sh
 ```
 
-On Windows, use `./scripts/install.ps1`. Both installers install the default MCP configuration, the
-`photocraft.config.toml` profile, and the `photocraft` skill automatically.
+On Windows, use `./scripts/install.ps1`. Both installers link the
+`photocraft.config.toml` profile and the `photocraft` skill. The default MCP
+configuration is added only when no config exists. For an existing config,
+copy the `[mcp_servers.photocraft]` section from `codex-home/config.toml` into
+your installed config if it is missing.
 Rerun the installer after updating titstack: existing sessions do not gain
 new tools simply because the CLI is installed. Restart Codex (including the
 desktop app) and start a session from the directory containing your artwork:

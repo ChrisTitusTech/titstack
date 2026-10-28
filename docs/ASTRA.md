@@ -129,8 +129,9 @@ restores its Astra incompatibility.
 The installer links global `AGENTS.md` and managed skills into this repository,
 so edits to linked files apply globally. The live config is a regular file;
 update only the intended model settings when applying this audit to an existing
-installation. The normal installer renders broader defaults and trust entries,
-so inspect its dry run before using it on a customized machine.
+installation. The installer now initializes defaults and trust entries only when no config
+exists; subsequent installs preserve the installed config. Adopt later defaults
+by editing that file explicitly.
 
 This audit preserves the existing `approval_policy = "never"` and
 `sandbox_mode = "danger-full-access"`, trust entries, command rules, disabled

@@ -56,6 +56,12 @@ try {
     New-Item -ItemType Directory -Path (Join-Path $testGitHubRepo '.git') -Force | Out-Null
     Set-Content -LiteralPath (Join-Path $testCodexHome 'AGENTS.md') -Value 'original global instructions'
     Set-Content -LiteralPath (Join-Path $testCodexHome 'config.toml') -Value @'
+# Personal settings and formatting must survive upgrades.
+model = "personal-model"
+model_reasoning_effort = "low"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
 notify = [
   "example-notifier",
   "turn-ended",
@@ -80,7 +86,21 @@ command = "node"
 
 [shell_environment_policy.set]
 EXAMPLE_RUNTIME_PATH = "example"
+
+[mcp_servers.photocraft]
+command = "my-photocraft-wrapper"
+args = ["mcp"]
+
+[mcp_servers.custom]
+command = "custom-server"
+
+[projects."/personal/project"]
+trust_level = "untrusted"
+
+[features]
+fast_mode = true
 '@
+    $originalConfigHash = (Get-FileHash -LiteralPath (Join-Path $testCodexHome 'config.toml')).Hash
 
     $env:USERPROFILE = $testUserHome
     $env:CODEX_HOME = $testCodexHome
@@ -91,28 +111,9 @@ EXAMPLE_RUNTIME_PATH = "example"
     $installedConfigPath = Join-Path $testCodexHome 'config.toml'
     $installedConfig = Get-Item -LiteralPath $installedConfigPath -Force
     Assert-Condition ($installedConfig.LinkType -ne 'SymbolicLink') "Expected generated config file: $installedConfigPath"
-    $installedConfigContent = [System.IO.File]::ReadAllText($installedConfigPath)
-    $escapedGitHubRoot = (Join-Path $testUserHome 'github').Replace('\', '\\')
-    $escapedGitHubRepo = $testGitHubRepo.Replace('\', '\\')
     Assert-Condition (
-        $installedConfigContent.Contains("[projects.`"$escapedGitHubRoot`"]")
-    ) 'Generated config does not trust the user GitHub root'
-    Assert-Condition (
-        $installedConfigContent.Contains("[projects.`"$escapedGitHubRepo`"]")
-    ) 'Generated config does not trust a nested Git repository'
-    foreach ($preservedLine in @(
-        'notify = [',
-        '[plugins."example@personal"]',
-        '[marketplaces.personal]',
-        '[hooks.state."example"]',
-        '[notice]',
-        '[mcp_servers.node_repl]',
-        '[shell_environment_policy.set]'
-    )) {
-        Assert-Condition (
-            $installedConfigContent.Contains($preservedLine)
-        ) "Generated config dropped machine-local state: $preservedLine"
-    }
+        (Get-FileHash -LiteralPath $installedConfigPath).Hash -eq $originalConfigHash
+    ) 'Installation changed existing config'
     Assert-Link (Join-Path $testCodexHome 'rules') (Join-Path $repoRoot 'codex-home/rules')
     Assert-Link (Join-Path $testCodexHome 'ollama.config.toml') (Join-Path $repoRoot 'codex-home/ollama.config.toml')
     Assert-Link (Join-Path $testCodexHome 'llamacpp.config.toml') (Join-Path $repoRoot 'codex-home/llamacpp.config.toml')
@@ -132,7 +133,7 @@ EXAMPLE_RUNTIME_PATH = "example"
     $configBackups = @(
         Get-ChildItem -LiteralPath (Join-Path $testCodexHome 'backups') -Filter 'config.toml' -File -Recurse
     )
-    Assert-Condition ($configBackups.Count -eq 1) "Expected one config.toml backup, found $($configBackups.Count)"
+    Assert-Condition ($configBackups.Count -eq 0) "Expected no config.toml backups, found $($configBackups.Count)"
 
     & (Join-Path $repoRoot 'scripts/install.ps1') | Out-Null
     Assert-Link (Join-Path $testCodexHome 'AGENTS.md') (Join-Path $repoRoot 'codex-home/AGENTS.md')
@@ -143,25 +144,29 @@ EXAMPLE_RUNTIME_PATH = "example"
     $configBackups = @(
         Get-ChildItem -LiteralPath (Join-Path $testCodexHome 'backups') -Filter 'config.toml' -File -Recurse
     )
-    Assert-Condition ($configBackups.Count -eq 1) 'Idempotent install created another config.toml backup'
-    $installedConfigContent = [System.IO.File]::ReadAllText($installedConfigPath)
-    foreach ($preservedLine in @(
-        'notify = [',
-        '[plugins."example@personal"]',
-        '[marketplaces.personal]',
-        '[hooks.state."example"]',
-        '[notice]',
-        '[mcp_servers.node_repl]',
-        '[shell_environment_policy.set]'
-    )) {
-        $occurrences = [regex]::Matches(
-            $installedConfigContent,
-            "(?m)^$([regex]::Escape($preservedLine))`r?$"
-        ).Count
-        Assert-Condition (
-            $occurrences -eq 1
-        ) "Idempotent install duplicated machine-local state: $preservedLine"
-    }
+    Assert-Condition ($configBackups.Count -eq 0) 'Idempotent install created another config.toml backup'
+    Assert-Condition (
+        (Get-FileHash -LiteralPath $installedConfigPath).Hash -eq $originalConfigHash
+    ) 'Repeat installation changed existing config'
+    & (Join-Path $repoRoot 'scripts/install.ps1') -DryRun | Out-Null
+    Assert-Condition (
+        (Get-FileHash -LiteralPath $installedConfigPath).Hash -eq $originalConfigHash
+    ) 'Dry-run changed existing config'
+
+    $linkedConfig = Join-Path $taskTestRoot 'personal-config.toml'
+    Move-Item -LiteralPath $installedConfigPath -Destination $linkedConfig
+    New-Item -ItemType SymbolicLink -Path $installedConfigPath -Target $linkedConfig | Out-Null
+    & (Join-Path $repoRoot 'scripts/install.ps1') | Out-Null
+    Assert-Link $installedConfigPath $linkedConfig
+    Assert-Condition (
+        (Get-FileHash -LiteralPath $linkedConfig).Hash -eq $originalConfigHash
+    ) 'Installation changed linked config'
+
+    Remove-Item -LiteralPath $installedConfigPath
+    New-Item -ItemType HardLink -Path $installedConfigPath -Target $linkedConfig | Out-Null
+    & (Join-Path $repoRoot 'scripts/install.ps1') | Out-Null
+    Assert-Condition ((Get-Item -LiteralPath $installedConfigPath).LinkType -eq 'HardLink') 'Installation replaced hard-linked config'
+    Assert-Condition ((Get-FileHash -LiteralPath $installedConfigPath).Hash -eq $originalConfigHash) 'Installation changed hard-linked config'
 
     $pluginLog = Join-Path $taskTestRoot 'plugin-calls.log'
     $env:CODEX_PLUGIN_TEST_LOG = $pluginLog
@@ -173,6 +178,17 @@ EXAMPLE_RUNTIME_PATH = "example"
     $env:CODEX_HOME = Join-Path $taskTestRoot 'plugin codex'
     $env:AGENTS_HOME = Join-Path $taskTestRoot 'plugin agents'
     & (Join-Path $repoRoot 'scripts/install.ps1') -Plugins | Out-Null
+
+    $freshConfigPath = Join-Path $env:CODEX_HOME 'config.toml'
+    $freshContent = [System.IO.File]::ReadAllText($freshConfigPath)
+    $escapedGitHubRoot = (Join-Path $testUserHome 'github').Replace('\', '\\')
+    $escapedGitHubRepo = $testGitHubRepo.Replace('\', '\\')
+    Assert-Condition ($freshContent.Contains("[projects.`"$escapedGitHubRoot`"]")) 'Fresh config lacks GitHub root'
+    Assert-Condition ($freshContent.Contains("[projects.`"$escapedGitHubRepo`"]")) 'Fresh config lacks nested repository'
+    Assert-Condition ($freshContent.Contains('fast_mode = false')) 'Fresh config lacks defaults'
+    $freshHash = (Get-FileHash -LiteralPath $freshConfigPath).Hash
+    & (Join-Path $repoRoot 'scripts/install.ps1') | Out-Null
+    Assert-Condition ((Get-FileHash -LiteralPath $freshConfigPath).Hash -eq $freshHash) 'Repeat installation changed initialized config'
 
     $expectedPluginCalls = @(
         Get-Content -LiteralPath (Join-Path $repoRoot 'codex-plugins.txt') |
@@ -194,6 +210,33 @@ EXAMPLE_RUNTIME_PATH = "example"
     Assert-Condition (-not (Test-Path -LiteralPath $dryRunCodexHome)) 'Dry-run created CODEX_HOME'
     Assert-Condition (-not (Test-Path -LiteralPath $dryRunAgentsHome)) 'Dry-run created AGENTS_HOME'
     Assert-Condition (-not (Test-Path -LiteralPath $dryRunPluginLog)) 'Dry-run invoked Codex plugin installation'
+
+    foreach ($kind in @('directory', 'dangling')) {
+        $invalidHome = Join-Path $taskTestRoot "invalid $kind"
+        New-Item -ItemType Directory -Path $invalidHome | Out-Null
+        $instructionsPath = Join-Path $invalidHome 'AGENTS.md'
+        Set-Content -LiteralPath $instructionsPath -Value 'keep instructions'
+        $invalidConfig = Join-Path $invalidHome 'config.toml'
+        if ($kind -eq 'directory') {
+            New-Item -ItemType Directory -Path $invalidConfig | Out-Null
+        }
+        else {
+            New-Item -ItemType SymbolicLink -Path $invalidConfig -Target (Join-Path $invalidHome 'missing.toml') | Out-Null
+        }
+        $env:CODEX_HOME = $invalidHome
+        $rejected = $false
+        try {
+            & (Join-Path $repoRoot 'scripts/install.ps1') | Out-Null
+        }
+        catch {
+            $rejected = $_.Exception.Message -like '*config.toml must be a regular file or a link to one*'
+        }
+        Assert-Condition $rejected "Installer did not reject $kind config target"
+        Assert-Condition (
+            (Get-Content -LiteralPath $instructionsPath -Raw).Trim() -eq 'keep instructions' -and
+            (Get-Item -LiteralPath $instructionsPath).LinkType -ne 'SymbolicLink'
+        ) 'Invalid config target changed instructions'
+    }
 
     Write-Output 'installer integration test passed'
 }
