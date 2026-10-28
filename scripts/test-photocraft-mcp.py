@@ -81,7 +81,7 @@ def check(client, root):
     initialized = client.request("initialize", {
         "protocolVersion": "2024-11-05",
         "capabilities": {},
-        "clientInfo": {"name": "titus-ai-smoke-test", "version": "1.0"},
+        "clientInfo": {"name": "titstack-smoke-test", "version": "1.0"},
     })
     assert "result" in initialized, initialized
     assert "tools" in initialized["result"]["capabilities"], initialized
@@ -137,7 +137,7 @@ def main():
     if not binary:
         parser.error("photocraft-cli not found; install it or pass --cli /path/to/photocraft-cli")
     binary = str(Path(binary).resolve())
-    with tempfile.TemporaryDirectory(prefix="titus-ai-photocraft-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="titstack-photocraft-") as temporary:
         root = Path(temporary) / "artwork with spaces"
         root.mkdir()
         with tempfile.TemporaryFile(mode="w+t") as errors:

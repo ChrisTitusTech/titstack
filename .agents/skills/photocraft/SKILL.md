@@ -12,8 +12,8 @@ tool requirements.
 
 ## Connection and scope
 
-The Titus AI default configuration starts the server with read and write roots
-set to its startup directory. Install the CLI, rerun the Titus AI installer to
+The titstack default configuration starts the server with read and write roots
+set to its startup directory. Install the CLI, rerun the titstack installer to
 link this skill and refresh configuration, then restart Codex. No profile is
 needed for ordinary CLI or desktop sessions. The optional
 `codex --profile photocraft` makes a missing server a startup error. For another client,

@@ -1,7 +1,7 @@
 # PhotoCraft MCP
 
 PhotoCraft already implements a stateful MCP server in Rust, exposed by
-`photocraft-cli mcp`. Titus AI provides default Codex configuration, a strict optional profile, and an
+`photocraft-cli mcp`. titstack provides default Codex configuration, a strict optional profile, and an
 integration test; no wrapper server, Python SDK, Node runtime, or desktop
 window is needed. Python is needed only for the test.
 
@@ -20,7 +20,7 @@ Ensure Cargo's bin directory is on the PATH visible to Codex. It is normally
 If using a prebuilt binary instead, it must support `mcp` and the two
 `--automation-*-root` flags. This integration was tested with PhotoCraft 0.8.2.
 
-Run the usual Titus AI installer from this repository:
+Run the usual titstack installer from this repository:
 
 ```sh
 ./scripts/install.sh
@@ -28,7 +28,7 @@ Run the usual Titus AI installer from this repository:
 
 On Windows, use `./scripts/install.ps1`. Both installers install the default MCP configuration, the
 `photocraft.config.toml` profile, and the `photocraft` skill automatically.
-Rerun the installer after updating Titus AI: existing sessions do not gain
+Rerun the installer after updating titstack: existing sessions do not gain
 new tools simply because the CLI is installed. Restart Codex (including the
 desktop app) and start a session from the directory containing your artwork:
 
