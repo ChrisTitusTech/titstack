@@ -60,8 +60,9 @@ GPT-6.1 Sol for complex coding and agentic work when available, with Astra for
 the most demanding work and Luna for focused tasks. Keep the explicitly chosen
 Astra baseline; compare accepted results and actual usage before switching.
 GPT-5.5 retires from ChatGPT and Codex on October 14, 2026, but not from the API.
-The `tui.model_availability_nux` entry in this repo is notification state, not
-a model selection, so it does not require a model migration.
+The former `tui.model_availability_nux` entries were notification state, not
+model selections. They were removed from the portable configuration along
+with personal project paths during the portability cleanup.
 
 The [September 11 skills guidance](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)
 emphasizes focused triggers, conditional references, and clear completion

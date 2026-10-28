@@ -126,9 +126,12 @@ forbidden = []
 if "notify" in config:
     forbidden.append("notify")
 
-for section in ("marketplaces", "notice", "plugins"):
+for section in ("marketplaces", "notice", "plugins", "projects"):
     if section in config:
         forbidden.append(section)
+
+if "model_availability_nux" in config.get("tui", {}):
+    forbidden.append("tui.model_availability_nux")
 
 if "state" in config.get("hooks", {}):
     forbidden.append("hooks.state")
