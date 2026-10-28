@@ -1,4 +1,0 @@
-interface:
-  display_name: "Rust CLI"
-  short_description: "Build tested Rust command line tools"
-  default_prompt: "Use $rust-cli to design, implement, test, or release a Rust CLI."

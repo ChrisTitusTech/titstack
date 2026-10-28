@@ -51,6 +51,10 @@ default further. No credit-savings benchmark was run during this audit.
 
 ## October 2026 follow-up
 
+The `python-ai`, `rust-cli`, and `find-skills` skills were removed on
+2026-10-27. Their mentions below record the earlier audit, not the current
+skill inventory.
+
 The [current model guide](https://learn.chatgpt.com/docs/models) recommends
 GPT-6.1 Sol for complex coding and agentic work when available, with Astra for
 the most demanding work and Luna for focused tasks. Keep the explicitly chosen
@@ -68,7 +72,7 @@ boundaries. The follow-up changes apply it as follows:
 - `pr-readiness` selects uncommitted, branch, or commit review scope.
 - `hugo` and `mdbook` inspect context relevant to the requested change.
 - `python-ai` validates affected components and routes API migrations to a
-  dated [reference](../.agents/skills/python-ai/references/openai-migrations.md).
+  dated migration reference (removed with the skill on 2026-10-27).
 - `autofix`, `code-review`, and `find-skills` are now repository-managed.
   Local fixes do not imply publication; generic review and how-to requests
   no longer select CodeRabbit or skill discovery indiscriminately.

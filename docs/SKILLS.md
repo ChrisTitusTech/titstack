@@ -78,8 +78,6 @@ Useful cases for this collection:
 | CodeRabbit reports a rate limit during an authorized PR fix loop. | Switch to Codex review, address existing and new findings, and announce merge readiness after a clean review and all required gates pass on the latest remote head. |
 | Codex fallback is clean but a required CodeRabbit check is pending. | Report the remaining required gate; do not claim merge readiness. |
 | CodeRabbit returns an authentication error. | Report the actual failure; do not label it rate limiting or a clean review. |
-| How do I fix this Python exception? | Solve the problem; do not invoke `find-skills`. |
-| Find an installable skill for database migrations. | Use `find-skills`; inspect candidates before recommending. |
 | Correct one word in this Hugo post. | Inspect relevant content and validate; skip a deployment inventory. |
 
 Record actual outcomes separately from expected behavior. A written case is
@@ -93,7 +91,6 @@ and current [skill discovery and metadata documentation](https://learn.chatgpt.c
 - `autofix`
 - `bash-scripting`
 - `code-review`
-- `find-skills`
 - `forgejo-maintainer`
 - `homelab-admin`
 - `hugo`
@@ -102,9 +99,7 @@ and current [skill discovery and metadata documentation](https://learn.chatgpt.c
 - `photocraft`
 - `podman-operator`
 - `pr-readiness`
-- `python-ai`
 - `quickshell`
-- `rust-cli`
 - `wayfinder`
 - `youtube-thumbnail`
 

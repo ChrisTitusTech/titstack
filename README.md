@@ -101,8 +101,6 @@ Invoke a skill explicitly when needed:
 
 ```text
 $linux-sysadmin diagnose this service failure
-$python-ai add an Ollama-backed model provider
-$rust-cli add a new subcommand
 ```
 
 Codex can also select skills automatically based on their descriptions.
