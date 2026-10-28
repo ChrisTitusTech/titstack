@@ -1,4 +1,4 @@
-# Titus AI tasks
+# titstack tasks
 
 ## Completed phase: Workflow alignment
 

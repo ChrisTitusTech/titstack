@@ -10,7 +10,7 @@ sandbox_mode = "danger-full-access"
 fast_mode = false
 memories = false
 
-[projects."/home/titus/github/titus-ai"]
+[projects."/home/titus/github/titstack"]
 trust_level = "trusted"
 
 [projects."/home/titus/github/resolve-linux"]

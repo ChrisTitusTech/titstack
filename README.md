@@ -1,4 +1,4 @@
-# titus-ai
+# titstack
 
 Portable Codex configuration, rules, and reusable skills.
 

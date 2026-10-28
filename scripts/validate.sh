@@ -293,8 +293,8 @@ if [[ -n "$powershell_cmd" ]]; then
     "$repo_root/scripts/test-install.ps1"; do
     # The PowerShell variables must not expand in Bash.
     # shellcheck disable=SC2016
-    TITUS_AI_POWERSHELL_FILE="$powershell_file" "$powershell_cmd" -NoProfile -NonInteractive -Command \
-      '$errors = $null; [void][System.Management.Automation.Language.Parser]::ParseFile($env:TITUS_AI_POWERSHELL_FILE, [ref]$null, [ref]$errors); if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }' ||
+    TITSTACK_POWERSHELL_FILE="$powershell_file" "$powershell_cmd" -NoProfile -NonInteractive -Command \
+      '$errors = $null; [void][System.Management.Automation.Language.Parser]::ParseFile($env:TITSTACK_POWERSHELL_FILE, [ref]$null, [ref]$errors); if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }' ||
       fail "PowerShell syntax validation failed for ${powershell_file#"$repo_root"/}"
   done
 fi
@@ -303,7 +303,7 @@ windows_symlink_supported() {
   # The PowerShell variables must not expand in Bash.
   # shellcheck disable=SC2016
   "$powershell_cmd" -NoProfile -NonInteractive -Command '
-    $probeRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("titus-ai-symlink-probe-" + [guid]::NewGuid())
+    $probeRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("titstack-symlink-probe-" + [guid]::NewGuid())
     $supported = $false
     try {
       [void](New-Item -ItemType Directory -Path $probeRoot)
